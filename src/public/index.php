@@ -1,4 +1,5 @@
 <?php
+
 use Phalcon\Di\FactoryDefault;
 use Phalcon\Loader;
 use Phalcon\Mvc\View;
@@ -11,6 +12,7 @@ use Phalcon\Session\Manager;
 use Phalcon\Session\Adapter\Stream;
 use Phalcon\Http\Response\Cookies;
 use time\Time;
+use Phalcon\Logger;
 
 
 $config = new Config([]);
@@ -34,7 +36,7 @@ $loader->registerDirs(
 
 $loader->registerNamespaces(
     [
-        'time' => APP_PATH ."/assets/",
+        'time' => APP_PATH . "/assets/",
     ]
 );
 $loader->register();
@@ -64,13 +66,13 @@ $container->setShared(
     function () {
         $session = new Manager();
         $files = new Stream(
-    [
-        'savePath' => '/tmp',
-    ]
-);
+            [
+                'savePath' => '/tmp',
+            ]
+        );
 
-$session->setAdapter($files)->start();
-return $session;
+        $session->setAdapter($files)->start();
+        return $session;
     }
 
 );
@@ -84,9 +86,26 @@ $container->set('cookies', function () {
 $container->set(
     'time',
     function () {
-       return new Time();
+        return new Time();
     }
 );
+
+$container->set(
+    'logger',
+    function () {
+
+        $adapter1 = new Phalcon\Logger\Adapter\Stream(APP_PATH . '/storage/logs/login.log');
+        $logger =   new Logger(
+            'messages',
+            [
+                'login' => $adapter1,
+            ]
+        );
+
+        return $logger;
+    }
+);
+
 
 $container->set(
     'mongo',

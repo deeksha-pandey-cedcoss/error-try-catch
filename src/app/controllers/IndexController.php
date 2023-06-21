@@ -13,22 +13,16 @@ class IndexController extends Controller
     {
         if (($_POST['email']) == "" || ($_POST['password']) == "") {
             echo "enter_data for the fields";
-            trigger_error("Input Fields are empty", E_USER_ERROR);
             die;
         } else {
-            echo "success";
-            die;
+            if (($_POST['email'] == "admin" && $_POST['password'] == "12345")) {
+                echo "sucessfull sign in";
+                die;
+            }
+            else {
+                $this->logger->info("Login details are $_POST[email] , $_POST[password]");
+                $this->response->redirect('index/login');
+            }
         }
-
-        function customError($errno, $errstr)
-        {
-            echo "<b>Error:</b> [$errno] $errstr<br>";
-            echo "Ending Script";
-            die();
-        }
-
-        //set error handler
-
-        set_error_handler("customError", E_USER_ERROR);
     }
 }
