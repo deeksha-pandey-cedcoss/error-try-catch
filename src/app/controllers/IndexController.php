@@ -11,18 +11,25 @@ class IndexController extends Controller
     }
     public function loginAction()
     {
-        if (($_POST['email']) == "" || ($_POST['password']) == "") {
+
+        $email = $_POST['email'];
+        if (($email) == "") {
             echo "enter_data for the fields";
             die;
         } else {
-            if (($_POST['email'] == "admin" && $_POST['password'] == "12345")) {
-                echo "sucessfull sign in";
-                die;
+            if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                echo "$email is a valid email address <br> ";
+            } else {
+                echo "$email is not a valid email address <br>";
+                throw new Exception("not a valid email address ");
             }
-            else {
-                $this->logger->info("Login details are $_POST[email] , $_POST[password]");
-                $this->response->redirect('index/login');
-            }
+        }
+
+        try {
+            echo "Done <br>";
+        } finally {
+            echo "Process complete.";
+            die;
         }
     }
 }
